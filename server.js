@@ -1,24 +1,20 @@
-import express from "express"
-import dotenv from "dotenv"
+import express from "express";
+import dotenv from "dotenv";
+import { connectDB } from "./db/db.js";
+import teacherRoutes from "./routes/teacherRoutes.js";
+
 dotenv.config();
-import cors from "cors"
-import {connectDB} from "./db/db.js";
+connectDB();
 
-const app=express();
-app.use(cors({
-    origin:"*"
-}));
+const app = express();
+app.use(express.json()); // to parse JSON bodies
 
-connectDB().
-then(()=>{
-   app.listen(process.env.PORT||8000,()=>{
-     console.log("app is listining at port 8000") ;
-   })
-   app.get('/postman',(req,res)=>{
-    res.send("hello postman sucessfull connection")
-   })
-   
-}).catch((err)=>{
-    console.log("database connection error"+err);
-    
-})
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+// Teacher Routes
+app.use("/api/teachers", teacherRoutes);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
